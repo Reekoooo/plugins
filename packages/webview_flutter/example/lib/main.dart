@@ -43,6 +43,9 @@ class WebViewExample extends StatelessWidget {
       // to allow calling Scaffold.of(context) so we can show a snackbar.
       body: Builder(builder: (BuildContext context) {
         return WebView(
+          onScrollYCallback: (y){
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@----------Y = $y   ---------------------");
+          },
           initialUrl: 'https://flutter.dev',
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {

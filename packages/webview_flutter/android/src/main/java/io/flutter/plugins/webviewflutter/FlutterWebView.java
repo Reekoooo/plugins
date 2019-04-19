@@ -8,6 +8,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
@@ -34,6 +35,21 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     platformThreadHandler = new Handler(context.getMainLooper());
     // Allow local storage.
     webView.getSettings().setDomStorageEnabled(true);
+    // this is a test added to get call back to Y scroll position API 23;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+
+      webView.setOnScrollChangeListener(new View.OnScrollChangeListener(){
+        @Override
+        public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+          methodChannel.invokeMethod("callback",scrollY);
+          //Log.d("Hi android","---------------ScrollY =  -----------------------------"+scrollY);
+
+        }
+      });
+    }
+
+
 
     methodChannel = new MethodChannel(messenger, "plugins.flutter.io/webview_" + id);
     methodChannel.setMethodCallHandler(this);

@@ -69,6 +69,9 @@ typedef NavigationDecision NavigationDelegate(NavigationRequest navigation);
 /// Signature for when a [WebView] has finished loading a page.
 typedef void PageFinishedCallback(String url);
 
+/// Signature for when a [webView] Scrolled in Y direction.
+typedef Future<dynamic> ScrollYCallback (MethodCall call);
+
 final RegExp _validChannelNames = RegExp('^[a-zA-Z_][a-zA-Z0-9]*\$');
 
 /// A named channel for receiving messaged from JavaScript code running inside a web view.
@@ -117,9 +120,13 @@ class WebView extends StatefulWidget {
     this.navigationDelegate,
     this.gestureRecognizers,
     this.onPageFinished,
+    this.onScrollYCallback
+
   })  : assert(javascriptMode != null),
         super(key: key);
 
+  /// Web view scrolling in Y direction callBack.
+  final ScrollYCallback onScrollYCallback;
   /// If not null invoked once the web view is created.
   final WebViewCreatedCallback onWebViewCreated;
 
@@ -270,6 +277,7 @@ class _WebViewState extends State<WebView> {
     _controller.complete(controller);
     if (widget.onWebViewCreated != null) {
       widget.onWebViewCreated(controller);
+
     }
   }
 
@@ -367,6 +375,7 @@ class WebViewController {
     _settings = _WebSettings.fromWidget(_widget);
     _updateJavascriptChannelsFromSet(_widget.javascriptChannels);
     _channel.setMethodCallHandler(_onMethodCall);
+    _channel.setMethodCallHandler(_widget.onScrollYCallback);
   }
 
   final MethodChannel _channel;
